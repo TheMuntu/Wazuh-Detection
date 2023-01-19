@@ -1,0 +1,41 @@
+<group name="win-powershell,">
+
+  <rule id="100500" level="0">
+    <if_group>windows</if_group>
+    <field name="win.system.providerName">^PowerShell$</field>
+    <options>no_full_log</options>
+    <description>Windows Powershell EventLog Entry</description>
+  </rule>
+
+  <rule id="100501" level="13">
+    <if_sid>100500</if_sid>
+    <field name="win.system.eventID">^400$</field> 
+    <field name="win.eventdata.data" type="pcre2">(?i)powershell(?:\.exe)? -e(?:ncodedcommand)?</field>
+    <options>no_full_log</options>
+    <description>PowerShell encoded script executed</description>
+     <mitre>
+      <id>T1059.001</id>
+    </mitre>
+  </rule>  
+
+</group>
+
+<group name="win-sysmon">
+  <rule id="100502" level="2">
+    <if_sid>61605</if_sid>
+    <field name="win.system.eventID" type="pcre2">^3$</field>
+    <field name="win.eventdata.image" type="pcre2">^C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1\.0\\\\powershell\.exe$</field>
+    <description>Network connection initiated by PowerShell</description>
+     <mitre>
+      <id>T1059.001</id>
+    </mitre>
+  </rule>
+
+  <rule id="100503" level="13" frequency="5" timeframe="60">
+    <if_matched_sid>100502</if_matched_sid>
+    <description>Multiple network connections initiated by PowerShell to "$(win.eventdata.destinationIp)" on port "$(win.eventdata.destinationPort)"</description>
+    <mitre>
+      <id>T1059.001</id>
+    </mitre>
+  </rule>
+</group>
