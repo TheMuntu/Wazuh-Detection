@@ -1,0 +1,67 @@
+<group name="windows,sysmon,">
+
+<!-- Command Prompt reading and executing the contents of a file  -->
+  <rule id="100100" level="12">
+    <if_sid>92004</if_sid>
+    <field name="win.eventdata.image" type="pcre2">(?i)cmd\.exe$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)cmd\.exe.+((\/r)|(\/v\.+\/c)|(\/c)).*cmd</field>
+    <description>Possible Raspberry Robin execution: Command Prompt reading and executing the contents of a CMD file on $(win.system.computer)</description>
+    <mitre>
+      <id>T1059.003</id>
+    </mitre>
+  </rule>
+
+<!-- msiexec.exe downloading and executing packages -->
+  <rule id="100101" level="7">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.image" type="pcre2">(?i)msiexec\.exe$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)msiexec.*(\/q|\-q|\/i|\-i).*(\/q|\-q|\/i|\-i).*http[s]{0,1}\:\/\/.+[.msi]{0,1}</field>
+    <description>msiexec.exe downloading and executing packages on $(win.system.computer)</description>
+    <mitre>
+      <id>T1218.007</id>
+    </mitre>
+  </rule>
+
+<!-- This rule matches connections URLs that match the Raspberry Robin URL format -->
+  <rule id="100102" level="12">
+    <if_sid>100101</if_sid>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)m.*s.*i.*e.*x.*e.*c.*(-.*q|\/.*q|\-.*i|\/.*i).*(-.*i|\/.*i|\-.*q|\/.*q).*http[s]{0,1}\:\/\/[a-zA-Z0-9]{2,4}\.[a-zA-Z0-9]{2,6}\:8080\/[a-zA-Z0-9]+\/.*?(?:-|\=|\?).*?</field>
+    <description>Possible Raspberry Robin execution: msiexec.exe downloading and executing packages on $(win.system.computer)</description>
+    <mitre>
+      <id>T1218.007</id>
+    </mitre>
+  </rule> 
+
+<!-- Bypass User Account Control using Fodhelper  -->
+  <rule id="100103" level="12">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.originalFileName" type="pcre2">(?i)(cmd|powershell|rundll32)\.exe</field>
+    <field name="win.eventdata.parentImage" type="pcre2">(?i)fodhelper\.exe</field>
+    <description>Use of fodhelper.exe to bypass UAC and execute malicious software</description>
+    <mitre>
+        <id>T1548.002</id>
+    </mitre>
+  </rule>
+
+<!-- Legitimate Windows utilities used to load DLLs : Execute Arbitrary DLL  -->
+  <rule id="100104" level="12">
+    <if_sid>61603</if_sid>
+    <if_group>sysmon_event1</if_group>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(odbcconf(\.exe)??\s+((\/s)|(-s))??.*((\/a)|(-a)) \{regsvr)|((rundll32\.exe|shell32).*shellexec_rundll.*(odbcconf\.exe|msiexec|control\.exe))</field>
+    <description>Possible Raspberry Robin execution: Legitimate Windows utilities loading DLLs on $(win.system.computer).</description>
+    <mitre>
+      <id>T1218.008</id>
+    </mitre>
+  </rule> 
+
+<!-- Network connections from the command line with no parameters  -->
+  <rule id="100105" level="10">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.commandLine" type="pcre2">(regsvr32\.exe|rundll32\.exe|dllhost\.exe).*\\";document.write\(\);GetObject\(\\"script:.*\).Exec\(\)</field>
+    <description>Possible Raspberry Robin execution: Network connections from the command line with no parameters on $(win.system.computer)</description>
+    <mitre>
+      <id>T1218.011</id>
+    </mitre>
+  </rule> 
+
+</group>
