@@ -1,0 +1,34 @@
+<group name="linux, webshell, windows,">
+  <!-- This rule detects file creation. -->
+  <rule id="100500" level="12">
+    <if_sid>554</if_sid>
+    <field name="file" type="pcre2">(?i).php$|.phtml$|.php3$|.php4$|.php5$|.phps$|.phar$|.asp$|.aspx$|.jsp$|.cshtml$|.vbhtml$</field>
+    <description>[File creation]: Possible web shell scripting file ($(file)) created</description>
+    <mitre>
+      <id>T1105</id>
+      <id>T1505</id>
+    </mitre>
+  </rule>
+  
+  <!-- This rule detects file modification. -->
+  <rule id="100501" level="12">
+    <if_sid>550</if_sid>
+    <field name="file" type="pcre2">(?i).php$|.phtml$|.php3$|.php4$|.php5$|.phps$|.phar$|.asp$|.aspx$|.jsp$|.cshtml$|.vbhtml$</field>
+    <description>[File modification]: Possible web shell content added in $(file)</description>
+    <mitre>
+      <id>T1105</id>
+      <id>T1505</id>
+    </mitre>
+  </rule>
+
+  <!-- This rule detects files modified with PHP web shell signatures. -->
+  <rule id="100502" level="15">
+    <if_sid>100501</if_sid>
+    <field name="changed_content" type="pcre2">(?i)passthru|exec|eval|shell_exec|assert|str_rot13|system|phpinfo|base64_decode|chmod|mkdir|fopen|fclose|readfile|show_source|proc_open|pcntl_exec|execute|WScript.Shell|WScript.Network|FileSystemObject|Adodb.stream</field>
+    <description>[File Modification]: File $(file) contains a web shell</description>
+    <mitre>
+      <id>T1105</id>
+      <id>T1505.003</id>
+    </mitre>
+  </rule>
+</group>
