@@ -1,0 +1,16 @@
+<group name="accesslog,text4shell,">
+
+<!-- This rule matches arbitrary controlled input for exploitation using script, dns or url prefixes -->
+
+  <rule id="100002" level="12">
+     <if_sid>31100</if_sid>
+     <url type="pcre2">%24%7B(script%3A(javascript|JEXL)%3A|url%3AUTF-8%3A|dns%3A(address|canonical-name|name)%7C)</url>
+     <description>Possible Text4Shell (CVE-2022-42889) exploitation attempt detected from $(srcip)</description>
+     <mitre>
+      <id>T1190</id>
+      <id>T1203</id>
+     <id>T1210</id>
+   </mitre>
+  </rule>
+
+</group>
