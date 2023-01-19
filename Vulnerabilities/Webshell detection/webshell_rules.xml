@@ -86,3 +86,17 @@
     </mitre>
   </rule>
 </group>
+
+<!-- This rule detects network connections from scripts. -->
+<group name="linux, webshell,">
+  <rule id="100510" level="12">
+    <decoded_as>ossec</decoded_as>
+    <match>ossec: output: 'webshell connections'</match>
+    <description>[Network connection]: Script attempting network connection on source port: $(local_port) and destination port: $(foreign_port)</description>
+    <mitre>
+      <id>TA0011</id>
+      <id>T1049</id>
+      <id>T1505.003</id>
+    </mitre>
+  </rule>
+</group>
