@@ -32,3 +32,57 @@
     </mitre>
   </rule>
 </group>
+
+<!-- Linux Rules. -->
+<group name="auditd, linux, webshell,">
+  <!-- This rule detects web shell command execution. -->
+  <rule id="100520" level="12">
+    <if_sid>80700</if_sid>
+    <field name="audit.key">webshell_command_exec</field>
+    <description>[Command execution ($(audit.exe))]: Possible web shell attack detected</description>
+    <mitre>
+      <id>T1505.003</id>
+      <id>T1059.004</id>
+    </mitre>
+  </rule>
+
+  <!-- This rule detects web shell network connections. -->
+  <rule id="100521" level="12">
+    <if_sid>80700</if_sid>
+    <field name="audit.key">webshell_net_connect</field>
+    <description>[Network connection via $(audit.exe)]: Possible web shell attack detected</description>
+    <mitre>
+      <id>TA0011</id>
+      <id>T1049</id>
+      <id>T1505.003</id>
+    </mitre>
+  </rule>
+</group>
+
+<!-- Windows Rules. -->
+<group name="sysmon, webshell, windows,">
+  <!-- This rule detects web shell command execution. -->
+  <rule id="100530" level="12">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.parentImage" type="pcre2">(?i)w3wp\.exe</field>
+    <field name="win.eventdata.parentUser" type="pcre2">(?i)IIS\sAPPPOOL\\\\DefaultAppPool</field>
+    <description>[Command execution ($(win.eventdata.commandLine))]: Possible web shell attack detected</description>
+    <mitre>
+      <id>T1505.003</id>
+      <id>T1059.004</id>
+    </mitre>
+  </rule>
+
+  <!-- This rule detects web shell network connections. -->
+  <rule id="100531" level="12">
+    <if_sid>61605</if_sid>
+    <field name="win.eventdata.image" type="pcre2">(?i)w3wp\.exe</field>
+    <field name="win.eventdata.user" type="pcre2">(?i)IIS\sAPPPOOL\\\\DefaultAppPool</field>
+    <description>[Network connection]: Possible web shell attempting network connection on source port: $(win.eventdata.sourcePort) and destination port: $(win.eventdata.destinationPort)</description>
+    <mitre>
+      <id>TA0011</id>
+      <id>T1049</id>
+      <id>T1505.003</id>
+    </mitre>
+  </rule>
+</group>
