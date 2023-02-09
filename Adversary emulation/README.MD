@@ -1,1 +1,1 @@
-# Adversary enulation rulesets
+# Adversary emulation rulesets
