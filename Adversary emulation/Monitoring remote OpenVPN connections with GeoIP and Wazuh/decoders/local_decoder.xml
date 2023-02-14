@@ -1,0 +1,21 @@
+<decoder name="openvpnas_decoder">
+    <prematch type="pcre2">\[OVPN \d+\] </prematch>
+</decoder>
+
+<decoder name="openvpnas_decoder_child">
+    <parent>openvpnas_decoder</parent>
+    <regex type="pcre2">(\d\d\d\d-\d\d-\d\d\w\d\d:\d\d:\d\d.\d\d\d\d)</regex>
+    <order>timestamp</order>
+</decoder>
+
+<decoder name="openvpnas_decoder_child">
+    <parent>openvpnas_decoder</parent>
+    <regex type="pcre2">(\d+\.\d+\.\d+\.\d+):(\d+) \[(\S+)\]</regex>
+    <order>srcip, srcport, srcuser</order>
+</decoder>
+
+<decoder name="openvpnas_decoder_child">
+    <parent>openvpnas_decoder</parent>
+    <regex type="pcre2">Peer Connection (\w+) with \[(\w+)\]</regex>
+    <order>action, interface</order>
+</decoder>
