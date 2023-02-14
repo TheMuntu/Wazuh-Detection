@@ -1,0 +1,12 @@
+<group name="Openvpnas">
+  <rule id="100302" level="0" noalert="1">
+    <decoded_as>openvpnas_decoder</decoded_as>
+    <description>OpenVPN access server messages grouped</description>
+  </rule>
+
+  <rule id="100303" level="3">
+    <if_sid>100302</if_sid>
+    <match>Peer Connection Initiated</match>
+    <description>OpenVPN remote connection established</description>
+  </rule>
+</group>
