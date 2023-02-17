@@ -1,0 +1,62 @@
+<group name="redline_infostealer,">
+
+  <!-- PowerShell encoded command -->
+  <rule id="100200" level="12">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.ParentImage" type="pcre2">(?i)vbc.exe</field>
+    <field name="win.eventdata.image" type="pcre2">powershell.exe</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)-EncodedCommand</field>
+    <description>Suspicious encoded PowerShell command detected. Possible RedLine stealer activity.</description>
+    <mitre>
+      <id>T1086</id>
+      <id>T1059.001</id>
+    </mitre>
+  </rule>
+
+  <!-- Rouge file creation -->
+  <rule id="100201" level="12">
+    <if_group>sysmon_eid11_detections</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)powershell\.exe</field>
+    <field name="win.eventdata.targetFilename" type="pcre2">(?i)AppData\\\\(Roaming|local)</field>
+    <description>Powershell process created executable: $(win.eventdata.targetFilename) file in AppData folder.</description>
+    <mitre>
+      <id>T1105</id>
+    </mitre>
+  </rule>
+
+  <!-- PowerShell encoded command -->
+  <rule id="100202" level="12">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.image" type="pcre2">powershell.exe</field>
+    <field name="win.eventdata.commandLine" type="pcre2">-ExclusionPath</field>
+    <field name="win.eventdata.commandLine" type="pcre2">UserProfile|ProgramFiles</field>
+    <description>Malicious activity detected. Multiple folders were added to the Windows Defender exclusion list.</description>
+    <mitre>
+      <id>T1204</id>
+    </mitre>
+  </rule>
+
+  <!-- Rouge file creation -->
+  <rule id="100203" level="12">
+    <if_sid>61613</if_sid>
+    <field name="win.eventdata.targetFilename" type="pcre2">(?i)[c-z]:\\\\Windows\\\\System32\\\\drivers\\\\etc\\\\hosts</field>
+    <field name="win.eventdata.image" type="pcre2">(?i)[c-z]:\\\\Users\\\\.+\\\\AppData\\\\Local\\\\Temp\\\\.+\.exe</field>
+    <description>Suspicious modification of $(win.eventdata.targetFilename) by $(win.eventdata.image). Possible RedLine stealer activity.</description>
+    <mitre>
+      <id>T1565</id>
+    </mitre>
+  </rule>
+
+  <!-- Persistence detection-->
+  <rule id="100204" level="12">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.image" type="pcre2">schtasks.exe</field>
+    <field name="win.eventdata.parentImage" type="pcre2">(?i)[c-z]:\\\\Users\\\\.+\\\\AppData\\\\Local\\\\Temp\\\\.+\.exe</field>
+    <field name="win.eventdata.commandLine" type="pcre2">\.exe</field>
+    <description>Suspicious scheduled task was created by $(win.eventdata.parentImage).</description>
+    <mitre>
+      <id>T1053</id>
+    </mitre>
+  </rule>
+
+</group>
